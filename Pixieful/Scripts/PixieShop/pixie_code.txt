@@ -1,0 +1,8 @@
+pixie_white - 1
+pixie_blue  - 2
+pixie_green - 3
+pixie_purple - 4
+pixie_red - 5
+pixie_target -6
+pixie_red_glow - 7
+pixie_yang - 8
