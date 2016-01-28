@@ -7,13 +7,13 @@ public class hero_attack : MonoBehaviour {
     private float time;
 
     public GameObject spell;
-    public string attack_button;
+    public KeyCode attack_button;
     public float cd;
 
 
     void Update()
     {
-        if (Input.GetButtonDown(attack_button))
+        if (Input.GetKeyDown(attack_button))
         {
             if (attack_is_on == false)
             {

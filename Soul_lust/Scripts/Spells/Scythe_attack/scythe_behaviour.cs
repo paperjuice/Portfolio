@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class scythe_behaviour : MonoBehaviour {
@@ -9,6 +9,7 @@ public class scythe_behaviour : MonoBehaviour {
     private float time = 0f;
     private float end_time = 1f;
 
+    public GameObject dmg_text;
     public float rs;
     public float slow_power;
     public float dmg;
@@ -55,20 +56,42 @@ public class scythe_behaviour : MonoBehaviour {
         }
     }
 
+    /* void OnTriggerStay(Collider col)
+     {
+         foreach (GameObject enemy in enemies)
+         {
+             if (col.gameObject == enemy)
+             {
+                 time += Time.deltaTime;
+
+                 if (time >= end_time)
+                 {
+                     dmg_text.GetComponent<TextMesh>().text = "" + dmg;
+                    Instantiate(dmg_text, enemy.transform.position, transform.rotation = Quaternion.Euler(new Vector3(65f, 0, 0)));
+                 }
+             }
+         }
+     }*/
+
+
     void OnTriggerStay(Collider col)
     {
         foreach (GameObject enemy in enemies)
         {
             if (col.gameObject == enemy)
             {
-                time += Time.deltaTime;
+                enemy.GetComponent<enemy_behaviour>().health -= dmg * Time.deltaTime;
+                
 
-                if (time >= end_time)
+                //ins text dmg
+                time -= Time.deltaTime;
+                if (time <=0)
                 {
-                    enemy.GetComponent<enemy_behaviour>().health -= dmg;
-                    time = 0;
+                    dmg_text.GetComponent<TextMesh>().text = "" + dmg;
+                    Instantiate(dmg_text, enemy.transform.position, dmg_text.transform.rotation = Quaternion.Euler(new Vector3(65f, 0, 0)));
+                    time = 1;
                 }
-            }
+            }  
         }
     }
 
@@ -81,9 +104,14 @@ public class scythe_behaviour : MonoBehaviour {
     {
         time_death += Time.deltaTime;
 
-        if (time_death >= life_time)
+        if (time_death >= life_time - 0.2f)
         {
             GetComponent<BoxCollider>().center = new Vector3(0f, 100f, 0);
+        }
+
+        if (time_death >= life_time)
+        {
+            
             Destroy(gameObject);
         }
     }

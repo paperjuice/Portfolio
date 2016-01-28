@@ -4,6 +4,7 @@ using System.Collections;
 public class controller : MonoBehaviour {
 
     private GameObject[] portals;
+    private GameObject[] enemies;
     private float time = 0f;
     private GameObject camera_tag;
 
@@ -11,10 +12,14 @@ public class controller : MonoBehaviour {
     //random enemy
     private float r_enemy = -1;
 
+
     //enemy list
     public GameObject enemy_horns;
     public GameObject enemy_bomb;
     public GameObject enemy_sentry;
+
+    //pillar 
+    public bool appear_pillar = false;
 
     //every 10 waves you go multiplier +2 which is the new chance to get a new enemy
     public int multiplier = 1;
@@ -42,102 +47,11 @@ public class controller : MonoBehaviour {
 
     void Update()
     {
-        // Instantiate_enemies();
-       // Instantiate_enemies_v2();
         Wave_Progress();
         Wave_Progress_Bar();                    //how the progress bar scales based on progress
         Boss_appearance();
     }
 
-    void Instantiate_enemies()
-    {
-        foreach (GameObject portal in portals)
-        {
-            if (enemies_no > 0)
-            {
-                time += Time.deltaTime;
-
-                if (time >= end_time)
-                {
-                    
-                    r_enemy = Random.Range(0, multiplier);
-                    print(r_enemy);
-                    //1
-                    if (r_enemy > 0 || r_enemy <= 1)
-                    {
-                        Instantiate(enemy_horns, portal.transform.position, Quaternion.identity);
-                        r_enemy = 0;
-                    }
-
-                    //4
-                    if (r_enemy >= 2 || r_enemy <= 6)
-                    {
-                        Instantiate(enemy_bomb, portal.transform.position, Quaternion.identity);
-                        r_enemy = 0;
-                    }
-                    //6
-                    if (r_enemy >= 5 || r_enemy <= 11)
-                    {
-                        Instantiate(enemy_sentry, portal.transform.position, Quaternion.identity);
-                        r_enemy = 0;
-                    }
-
-                  //  Instantiate(enemy_horns, portal.transform.position, Quaternion.identity);
-                    time = 0f;
-                    enemies_no--;
-                    
-                }
-            }
-        }
-    }
-
-    void Instantiate_enemies_v2()
-    {
-        bool ins_enemy = false;
-
-        if (enemies_no > 0f)
-        {
-            time += Time.deltaTime;
-
-            if (time >= end_time)
-            {
-                ins_enemy = true;
-                r_enemy= Random.Range(0, multiplier);
-                time = 0f;
-                enemies_no--;
-            }
-        }
-
-
-        foreach(GameObject portal in portals)
-        {
-            if (ins_enemy == true)
-            {
-                // add the number that is above if statement to the last condition in if
-
-                //1
-                if (r_enemy >= 0 && r_enemy <= 1)
-                {
-                    Instantiate(enemy_horns, portal.transform.position, transform.rotation);
-                    r_enemy = -1;
-                }
-
-                //4
-                if (r_enemy >= 2 && r_enemy <= 5)
-                {
-                    Instantiate(enemy_bomb, portal.transform.position, transform.rotation);
-                    r_enemy = -1;
-                }
-
-                //6
-                if (r_enemy >= 6 && r_enemy <= 11)
-                {
-                    Instantiate(enemy_bomb, portal.transform.position, transform.rotation);
-                    r_enemy = -1;
-                }
-            }
-        }
-    }
 
     void Wave_Progress()
     {
@@ -148,11 +62,16 @@ public class controller : MonoBehaviour {
             wave++;
 
             
-
            wave_text.GetComponent<fade_in>().a = 1;
            wave_text.GetComponent<TextMesh>().text = "Wave " + wave;
 
-            current_progress = 0;
+           current_progress = 0;
+
+
+            //pillar appear 
+           appear_pillar = true;
+
+
 
         }
     }
@@ -170,13 +89,32 @@ public class controller : MonoBehaviour {
     void Boss_appearance()
     {
         if (wave % 10 == 0)
-        { 
-            foreach(GameObject portal in portals )
+        {
+            print("boss appear");
+
+            foreach (GameObject portal in portals)
             {
-                portal.SetActive(false);
-                print("a venit boss");
-                camera_tag.GetComponent<camera_follow>().camera_boss_mode = true;
+                portal.GetComponent<portal_controller>().enabled = false;
             }
+
+
+            //get all the enemies and destroy them
+            enemies = GameObject.FindGameObjectsWithTag("enemy");
+            foreach (GameObject enemy in enemies)
+            {
+                Destroy(enemy.gameObject);
+            }
+
+            camera_tag.GetComponent<camera_follow>().camera_boss_mode = true;
+        }
+
+        else if (wave % 10 != 0)
+        {
+            foreach (GameObject portal in portals)
+            {
+                portal.GetComponent<portal_controller>().enabled = true;
+            }
+            camera_tag.GetComponent<camera_follow>().camera_boss_mode = false;
         }
     }
 

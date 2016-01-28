@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class hero_movement : MonoBehaviour {
@@ -93,6 +93,9 @@ public class hero_movement : MonoBehaviour {
 
     void Movement_v2()
     {
+
+
+
         if (Input.GetKey(move_up))
         {
             rigid.AddForce(Vector3.forward * ms * 1000);

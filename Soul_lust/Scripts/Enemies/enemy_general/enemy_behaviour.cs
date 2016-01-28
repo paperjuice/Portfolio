@@ -17,6 +17,14 @@ public class enemy_behaviour : MonoBehaviour {
 
     private RaycastHit raycast;
 
+    //count how many enemies you have killed
+    private GameObject enemy_killed;
+
+    //random chance to get currency
+    private int random_c_currency;
+    public GameObject soul_currency;
+
+
     public GameObject soul;
     public GameObject death_particle;
 
@@ -33,20 +41,26 @@ public class enemy_behaviour : MonoBehaviour {
     public float starting_ms;
 
     public float rs;
-    public float health;
 
-    public bool follow = true;          //check fi player is followed
+    //health
+    public float health;
+    public GameObject health_bar;
+    private float max_health;
+
+    //check fi player is followed
+    public bool follow = true;          
 
 
     void Awake()
     {
         starting_position = transform.position;
-       
+        max_health = health;
 
         rigid = GetComponent<Rigidbody>();
         player = GameObject.FindGameObjectWithTag("Player");
         camera_ = GameObject.FindGameObjectWithTag("MainCamera");
         walls = GameObject.FindGameObjectsWithTag("wall");
+        enemy_killed = GameObject.FindGameObjectWithTag("enemy_killed");
        // portal = GameObject.FindGameObjectWithTag("portal");
     }
 
@@ -71,6 +85,9 @@ public class enemy_behaviour : MonoBehaviour {
         Dodge_projectile();
         Wall_Dodge();
         Death_by_friend();
+        Ms_increment();
+        Health_bar();
+        
     }
 
     void LookAtHero()
@@ -120,13 +137,23 @@ public class enemy_behaviour : MonoBehaviour {
     {
         if (health <= 0)
         {
+            Enemey_killed_counter();
             Instantiate(soul, transform.position, transform.rotation *= Quaternion.Euler(0f, Random.Range(0f, 180f), 0f));
             Instantiate(soul, transform.position, transform.rotation *= Quaternion.Euler(0f, Random.Range(0f, 180f), 0f));
+            ms = starting_ms;   
            // camera_.GetComponent<Animator>().SetTrigger("shake");
             Instantiate(death_particle, transform.position, transform.rotation);
+
+            //random currency
+            random_c_currency = Random.Range(1, 10);
+            if(random_c_currency == 1)
+            {
+                Instantiate(soul_currency, transform.position, transform.rotation);
+                random_c_currency = 0;
+            }
+
             transform.position = starting_position;              
             health = starting_health;
-            ms = starting_ms;   
         }
     }
 
@@ -220,5 +247,25 @@ public class enemy_behaviour : MonoBehaviour {
 
 
 
+    void Ms_increment()
+    {
+        if (ms < starting_ms)
+        {
+            ms += Time.deltaTime * 1f;
+        }
+    }
+
+
+    void Health_bar()
+    {
+        health_bar.transform.localScale = new Vector3(health / max_health, 1f, 1f);
+    }
+
+
+    void Enemey_killed_counter()
+    {
+        enemy_killed.GetComponent<total_enemies_killed>().small_enemies_killed++;
+        enemy_killed.GetComponent<TextMesh>().color = new Color(256, 256, 256, 256);
+    }
 }
 

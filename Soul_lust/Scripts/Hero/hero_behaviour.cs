@@ -3,8 +3,12 @@ using System.Collections;
 
 public class hero_behaviour : MonoBehaviour {
 
-    
 
+    //currency incrementation
+    [SerializeField]
+    public static float currency = 0;
+
+    public GameObject health_text_numbers;
     public GameObject health_bar;
 
     public float hp;
@@ -24,6 +28,9 @@ public class hero_behaviour : MonoBehaviour {
         Health_bar_scale();
         Cap_hp();
         Death();
+        Text_health();
+
+       // print(currency);
     }
 
 
@@ -55,5 +62,10 @@ public class hero_behaviour : MonoBehaviour {
         {
             hp = max_hp;
         }
+    }
+
+    void Text_health()
+    {
+        health_text_numbers.GetComponent<TextMesh>().text = hp.ToString("N0") + "/" + max_hp; 
     }
 }
